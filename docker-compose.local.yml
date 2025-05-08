@@ -1,0 +1,32 @@
+services:
+  app:
+    build: .
+    container_name: express-jwt-api
+    ports:
+      - "3001:3001"
+    depends_on:
+      - mongo
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/authdemo
+      - JWT_SECRET=supersecretjwtkey
+      - PORT=3001
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+      - /usr/src/app/dist
+    restart: unless-stopped
+    command: sh -c "npm run build && npm start"
+
+  mongo:
+    image: mongo:latest
+    container_name: express-jwt-mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    restart: unless-stopped
+    environment:
+      - MONGO_INITDB_DATABASE=authdemo
+
+volumes:
+  mongo-data: 
